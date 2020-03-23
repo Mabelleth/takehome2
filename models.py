@@ -26,7 +26,6 @@ class User(db.Model):
 			'name' : self.name,
 			'contact_number' : self.contact_number
 				}
-
 		# end your code before this line
 
 class Temperature(db.Model):
@@ -54,6 +53,7 @@ class Temperature(db.Model):
 			'id' : self.id,
 			'temp_value' : self.temp_value,
 			'timestamp' : self.timestamp,
+			'user_id' : self.user.id,
 			'user_name' : self.user_name
 		}
 		# end your code before this line

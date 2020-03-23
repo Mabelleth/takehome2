@@ -90,7 +90,7 @@ def create_temp():
 		return 'Error, temperature value entered must be a float'
 
 	try:
-		new_temp_input = Temperature(temp_value = new_temp_value, user_id = thisuser)
+		new_temp_input = Temperature(temp_value = new_temp_value, user_name = thisuser)
 		db.session.add(new_temp_input)
 		db.session.commit()
 		return jsonify('new temp record {} was created for user {}'.format(new_temp_value, thisuser))
