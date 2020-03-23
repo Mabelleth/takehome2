@@ -36,16 +36,16 @@ class Temperature(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	timestamp = db.Column(db.DateTime, default = datetime.datetime.utcnow)
 	temp_value = db.Column(db.Float, unique = False, nullable = False)
-	user_id = db.Column(db.String(50), db.ForeignKey('user.name'))
+	user_name = db.Column(db.String(50), db.ForeignKey('user.name'))
 
-	user = db.relationship('User', back_populates = 'temperature', uselist = False)
+	user = db.relationship('User', back_populates = 'temperature')
 
 	# end your code before this line
 
-	def __init__(self, temp_value, user_id):
+	def __init__(self, temp_value, user_name):
 		# start your code after this line
 		self.temp_value = temp_value
-		self.user_id = user_id
+		self.user_name = user_name
 		# end your code before this line
 
 	def serialize(self):
@@ -54,8 +54,7 @@ class Temperature(db.Model):
 			'id' : self.id,
 			'temp_value' : self.temp_value,
 			'timestamp' : self.timestamp,
-			'user_id' : self.user.id,
-			'user_name' : self.user_id
+			'user_name' : self.user_name
 		}
 		# end your code before this line
 
