@@ -112,6 +112,13 @@ def get_user():
 
 	# start your code after this line
 
+	all_user = User.query.all()
+	# all_temp = Temperature.query.all()
+	if all_user is None:
+		return 'Error, you have added in any of your friends\' information yet.'
+
+	return jsonify([u.serialize() for u in all_user])
+
 	# end your code before this line
 
 @app.route('/temp/', methods=['GET']) 
@@ -119,9 +126,10 @@ def get_temp():
 	print('get_temp')
 
 	# start your code after this line
+
 	all_temp = Temperature.query.all()
 	if all_temp is None:
-		return 'Error, no one has input any temperature reading yet.'
+		return 'Error, no one has inputted any temperature reading yet.'
 		
 	return jsonify([t.serialize() for t in all_temp])
 	# end your code before this line

@@ -23,9 +23,11 @@ class User(db.Model):
 	def serialize(self):
 		# start your code after this line
 		return {
+			'contact_number' : self.contact_number,
+			'id':self.id,
 			'name' : self.name,
-			'contact_number' : self.contact_number
-				}
+			'temp_logs' : [{"temp":t.temp_value, "timestamp": t.timestamp} for t in self.temperature]
+			}
 		# end your code before this line
 
 class Temperature(db.Model):
