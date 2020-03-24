@@ -128,12 +128,27 @@ def get_temp():
 	# start your code after this line
 	if 'name' in request.args: 
 		name = request.args.get('name')
-		person = Temperature.query.filter_by(user_name=name)
-		if person.first() is not None:
-			return jsonify([t.serialize() for t in person])
+		person1 = Temperature.query.filter_by(user_name=name)
+		if person1.first() is not None:
+			if 'threshold' in request.args:
+				try: 
+					threshold = float(request.args.get('threshold'))
+					person2 = Temperature.query.filter(Temperature.user_name==name, Temperature.temp_value> threshold)
+					
+					if person2.first() is not None:
+						return jsonify([t.serialize() for t in person2])
+					else:
+						return "{} does not have any temperature recorded above the threshold of {}".format(name, threshold)
+				except: 
+					return "Parameter threshold must be a float."
+			else:
+				return jsonify([t.serialize() for t in person1])
+
 		else:
 			return "You have entered an invalid name."
 
+	if 'threshold' in request.args:
+		return "Please fill in parameter name together with parameter threshold"
 	all_temp = Temperature.query.all()
 	if all_temp is None:
 		return 'Error, no one has inputted any temperature reading yet.'
