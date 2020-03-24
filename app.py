@@ -126,6 +126,13 @@ def get_temp():
 	print('get_temp')
 
 	# start your code after this line
+	if 'name' in request.args: 
+		name = request.args.get('name')
+		person = Temperature.query.filter_by(user_name=name)
+		if person.first() is not None:
+			return jsonify([t.serialize() for t in person])
+		else:
+			return "You have entered an invalid name."
 
 	all_temp = Temperature.query.all()
 	if all_temp is None:
