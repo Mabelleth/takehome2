@@ -145,7 +145,6 @@ def get_user():
 	# start your code after this line
 
 	all_user = User.query.all()
-	# all_temp = Temperature.query.all()
 	if all_user is None:
 		return 'Error, you have not added in any of your friends\' information yet.'
 
@@ -177,7 +176,7 @@ def get_temp():
 				return jsonify([t.serialize() for t in person1])
 
 		else:
-			return "You have entered an invalid name."
+			return jsonify([])
 
 	if 'threshold' in request.args:
 		return "Please fill in parameter name together with parameter threshold"
