@@ -25,9 +25,9 @@ def create_user():
 
 	#check if name and contact in request.json
 	if 'name' not in request.json:
-		return 'Error, <name> parameter is mandatory'
+		return 'Error, <name> key is mandatory'
 	if 'contact' not in request.json:
-		return 'Error, <contact> parameter is mandatory'
+		return 'Error, <contact> key is mandatory'
 
 	new_name = request.json['name']
 	new_contact_number = request.json['contact']
@@ -48,7 +48,7 @@ def create_user():
 		return 'Error, contact number not 8 digits'
 
 	if User.query.filter_by(contact_number=new_contact_number).first() != None:
-		return 'Error, contact number already exists in database'
+		return "Error, you must have keyed in your friend's number instead because the number already exists in our database"
 
 	#add user into database, should have no error from here alr, delete the try&except?
 	try:
@@ -69,10 +69,9 @@ def create_temp():
 
 	#check if name and temp_value in request.json
 	if 'name' not in request.json:
-		return 'Error, <name> parameter is mandatory'
+		return 'Error, <name> key is mandatory'
 	if 'temp' not in request.json:
-		return 'Error, <temp> parameter is mandatory'
-
+		return 'Error, <temp> key is mandatory'
 
 	#check type(name) and if name exists in database
 	thisuser = request.json['name']
@@ -94,9 +93,11 @@ def create_temp():
 		db.session.add(new_temp_input)
 		db.session.commit()
 		return jsonify('new temp record {} was created for user {}'.format(new_temp_value, thisuser))
+
 	except Exception as e:
 		return (str(e))
-	# end your code before this line
+	# end your code before this 
+
 
 @app.route('/friend/', methods=['PUT']) 
 def update_friend():
@@ -104,7 +105,38 @@ def update_friend():
 
 	# start your code after this line
 
-	# end your code before this line
+	#check if user and friends are specified in json request
+	if 'user' not in request.json:
+		return 'Error, <user> key is mandatory'
+	if 'friends' not in request.json:
+		return 'Error, <friends> key is mandatory'	
+
+	user = request.json['user']
+	friends = request.json['friends']
+
+	#find row of this user
+	user_row = User.query.filter_by(name=user).first()
+
+	#check if user exists in database
+	if user_row is None:
+		return 'Error, user does not exist in database'
+
+	try:
+		to_be_added = []
+		for i in friends:
+			thisfriend = User.query.filter_by(name=i).first()
+
+			if thisfriend != None and thisfriend != user_row:
+				to_be_added.append(thisfriend)
+
+		user_row.friends = to_be_added
+		db.session.commit()
+
+		return jsonify(user_row.serialize())
+	
+	except Exception as e:
+		return str(e)
+
 
 @app.route('/user/', methods=['GET']) 
 def get_user():
@@ -115,7 +147,7 @@ def get_user():
 	all_user = User.query.all()
 	# all_temp = Temperature.query.all()
 	if all_user is None:
-		return 'Error, you have added in any of your friends\' information yet.'
+		return 'Error, you have not added in any of your friends\' information yet.'
 
 	return jsonify([u.serialize() for u in all_user])
 
@@ -156,8 +188,8 @@ def get_temp():
 	return jsonify([t.serialize() for t in all_temp])
 	# end your code before this line
 
-# your code ends here 
 
+# your code ends here 
 
 
 
