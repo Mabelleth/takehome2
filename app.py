@@ -114,6 +114,10 @@ def update_friend():
 	user = request.json['user']
 	friends = request.json['friends']
 
+	#check if type(friends) is list
+	if type(friends) != list:
+		return 'Error, <friends> must be entered in list format'
+
 	#find row of this user
 	user_row = User.query.filter_by(name=user).first()
 
@@ -124,6 +128,7 @@ def update_friend():
 	try:
 		to_be_added = []
 		for i in friends:
+			i = str(i)
 			thisfriend = User.query.filter_by(name=i).first()
 
 			if thisfriend != None and thisfriend != user_row:
@@ -169,7 +174,7 @@ def get_temp():
 					if person2.first() is not None:
 						return jsonify([t.serialize() for t in person2])
 					else:
-						return "{} does not have any temperature recorded above the threshold of {}".format(name, threshold)
+						return jsonify([])
 				except: 
 					return "Parameter threshold must be a float."
 			else:
@@ -179,7 +184,14 @@ def get_temp():
 			return jsonify([])
 
 	if 'threshold' in request.args:
-		return "Please fill in parameter name together with parameter threshold"
+		try:
+			threshold = float(request.args.get('threshold'))
+			all_above_threshold = Temperature.query.filter(Temperature.temp_value > threshold)
+			return jsonify([t.serialize() for t in all_above_threshold])
+
+		except:
+			return 'Parameter threshold must be a float.'
+
 	all_temp = Temperature.query.all()
 	if all_temp is None:
 		return 'Error, no one has inputted any temperature reading yet.'
@@ -189,8 +201,5 @@ def get_temp():
 
 
 # your code ends here 
-
-
-
 if __name__ == '__main__':
 	app.run(debug=True)
